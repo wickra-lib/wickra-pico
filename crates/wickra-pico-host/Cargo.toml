@@ -1,6 +1,6 @@
 [package]
 name = "wickra-pico-host"
-description = "std golden-reference generator for the Wickra Pico signal sequence (the parity oracle)."
+description = "Host golden-reference generator and byte-exact parity checker for the Wickra Pico signal sequence."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -12,3 +12,10 @@ authors.workspace = true
 workspace = true
 
 [dependencies]
+clap = { workspace = true }
+wickra-pico-signal = { path = "../wickra-pico-signal", version = "0.1", features = ["std"] }
+embedded-data = { path = "../../embedded-data", version = "0.1" }
+
+[[bin]]
+name = "wickra-pico-host"
+path = "src/main.rs"

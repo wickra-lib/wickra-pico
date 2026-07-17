@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `wickra-pico-host`: the host golden generator and byte-exact parity checker.
+  `bless` regenerates the CSV feed, the embedded `FEED` const and the expected
+  signal sequence from the single feed formula (`100 + 15·sin(i/8) + 0.05·i`,
+  128 f32 ticks); `check` recomputes the sequence and asserts it matches the
+  committed golden byte-for-byte — the host side of the cross-target guarantee.
+  A drift-guard test pins the committed `embedded-data` `FEED` to the formula.
+- `embedded-data`: the generated `FEED`/`FEED_LEN` const replay feed.
 - `wickra-pico-signal`: the shared, `#![no_std]`, allocation-free EMA(9)/EMA(21)
   cross engine over `embed-core`. `SignalEngine::on_tick` streams prices and
   emits a `Signal` (golden/death cross) on each crossing, with an exact-`0.0` tie
