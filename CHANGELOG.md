@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- CI/CD: the repository's workflow suite — `ci.yml` (host jobs: fmt, clippy,
+  3-OS test, `no_std` thumbv6m build, host-golden parity check, MSRV 1.86,
+  cargo-deny), `firmware.yml` (the RP2040 `thumbv6m-none-eabi` cross-compile,
+  clippy and size report — the hardware gate), plus `codeql`, `scorecard`,
+  `zizmor`, link-check and metadata-audit workflows, and a demo `release.yml`
+  that builds the flashable `.uf2` with a SLSA build-provenance attestation and
+  attaches it to a GitHub Release (no package registries — this is a demo).
+- `docs/SIGNAL.md` and `docs/DETERMINISM.md`: the exact EMA-cross pipeline and
+  the cross-target byte-parity guarantee (`f64` end to end, no platform math in
+  the signal path, `libm::sinf` for a reproducible feed).
+- `libm` is now used for the feed formula's `sin`, so the committed golden feed
+  is bit-identical regardless of which OS runs `bless`.
 - `docs/`: the demo reproducibility guides — `FLASHING.md` (BOOTSEL UF2 and
   probe-rs), `WIRING.md` (the on-board GPIO25 LED needs no wiring, plus an
   external-LED variant) and `VIDEO_SCRIPT.md` (the 30-second "LED blinks on the

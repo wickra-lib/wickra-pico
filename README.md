@@ -5,8 +5,10 @@
 [![Built on Wickra](https://img.shields.io/badge/built%20on-wickra-3b82f6)](https://github.com/wickra-lib/wickra)
 [![Status](https://img.shields.io/badge/status-pre--release-orange)](https://github.com/wickra-lib/wickra-pico)
 [![CI](https://github.com/wickra-lib/wickra-pico/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/ci.yml)
+[![Firmware](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml/badge.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 [![OpenSSF Scorecard](https://img.shields.io/badge/OpenSSF-Scorecard-3b82f6)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra-pico)
+[![Cross-target deterministic](https://img.shields.io/badge/cross--target-deterministic-3b82f6)](docs/DETERMINISM.md)
 
 ---
 
@@ -33,25 +35,67 @@ The `no_std` indicator kernel comes from
 [`embed-core`](https://github.com/wickra-lib/wickra-embed) (allocation-free,
 `#![no_std]`, `forbid(unsafe_code)`), consumed as a git dependency.
 
-## Status
+## How it works
 
-Early development (0.1.0, unreleased). Built out in phases; this scaffold pins
-the repository, governance and supply-chain configuration ahead of the signal
-kernel, the embedded feed and the firmware crates.
+An embedded `const` feed of 128 price ticks streams tick-by-tick through the
+`no_std` `SignalEngine` — an EMA(9)/EMA(21) cross. On a **golden cross** the LED
+turns on; on a **death cross** it turns off. The engine is O(1) per tick,
+allocation-free, and links the same code on the host and on the device. The
+firmware is nothing but HAL glue around it.
+
+```rust
+let mut engine = SignalEngine::new();
+for &price in embedded_data::FEED.iter() {
+    match engine.on_tick(f64::from(price)) {
+        Some(Signal::GoldenCross) => led.set_high().unwrap(),
+        Some(Signal::DeathCross)  => led.set_low().unwrap(),
+        None => {}
+    }
+    delay.delay_ms(60);
+}
+```
+
+The full pipeline is in [docs/SIGNAL.md](docs/SIGNAL.md).
+
+## Determinism & parity
+
+The signal sequence the RP2040 produces is **byte-identical** to the one the
+`std` host reference produces — cross-*target* determinism, the same kind of
+guarantee the rest of the ecosystem makes across languages. It holds because the
+engine is `f64` end to end, allocation-free, and has no platform-specific math in
+the signal path. `wickra-pico-host check` recomputes the sequence and asserts it
+matches the committed golden byte-for-byte; a drift guard pins the compiled-in
+feed to the formula. See [docs/DETERMINISM.md](docs/DETERMINISM.md).
+
+## The 30-second video
+
+The demo is meant to be filmed: the on-board LED blinking on the EMA cross, no
+wiring, no screen. The shot list and captions are in
+[docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md).
 
 ## Hardware
 
-- **Raspberry Pi Pico** (RP2040, `thumbv6m-none-eabi`) — the primary target.
-- **ESP32** — optional secondary target.
+- **Raspberry Pi Pico** (RP2040, `thumbv6m-none-eabi`) — the primary target. The
+  demo uses the **on-board LED (GPIO25)**, so it needs no wiring at all.
+- **ESP32** (Xtensa) — a roadmap target (needs the `espup` toolchain); see
+  [ROADMAP.md](ROADMAP.md).
+
+## Flash it yourself
+
+Grab the `.uf2` from a release (or build it), hold **BOOTSEL**, plug the Pico in,
+and drag the file onto the `RPI-RP2` drive. The full instructions — including the
+`probe-rs` route — are in [docs/FLASHING.md](docs/FLASHING.md); wiring options
+(none needed, plus an external-LED variant) are in
+[docs/WIRING.md](docs/WIRING.md).
 
 ## Workspace layout
 
 ```
-crates/wickra-pico-signal   no_std signal wrapper over embed-core's EMA cross
-crates/wickra-pico-host     std golden-reference generator (the parity oracle)
-embedded-data/              the embedded replay feed (const array)
+crates/wickra-pico-signal   no_std signal kernel over embed-core's EMA cross
+crates/wickra-pico-host     std golden-reference generator + parity checker
+embedded-data/              the generated const replay feed
 firmware/rp-pico            RP2040 firmware (workspace-excluded: own target)
-firmware/esp32              ESP32 firmware  (workspace-excluded: own target)
+golden/                     the cross-target reference corpus
 ```
 
 ## Building from source
@@ -60,10 +104,16 @@ firmware/esp32              ESP32 firmware  (workspace-excluded: own target)
 # Host workspace members (signal kernel, host reference, feed):
 cargo build
 cargo test
+cargo run -p wickra-pico-host -- check   # verify the golden sequence
+
+# RP2040 firmware (its own excluded crate):
+cd firmware/rp-pico
+cargo build --target thumbv6m-none-eabi --release
 ```
 
-Firmware crates build for their own bare-metal targets and are excluded from the
-host workspace; see [ARCHITECTURE.md](ARCHITECTURE.md).
+The firmware is excluded from the host workspace — it builds for a bare-metal
+target with its own linker script and `panic = "abort"` profile; see
+[ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Requirements
 
