@@ -24,7 +24,10 @@ pub fn feed() -> [f32; FEED_LEN] {
     let mut out = [0.0f32; FEED_LEN];
     for (i, slot) in out.iter_mut().enumerate() {
         let x = i as f32;
-        *slot = 100.0 + 15.0 * (x / 8.0).sin() + 0.05 * x;
+        // `libm::sinf`, not `f32::sin`: the host libm differs by ~1 ULP across
+        // OSes, so a const blessed on one platform would trip the drift guard on
+        // another. `libm` is bit-identical everywhere.
+        *slot = 100.0 + 15.0 * libm::sinf(x / 8.0) + 0.05 * x;
     }
     out
 }
