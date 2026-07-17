@@ -1,0 +1,5 @@
+23 death_cross
+49 golden_cross
+75 death_cross
+99 golden_cross
+125 death_cross
