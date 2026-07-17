@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `firmware/rp-pico`: the Raspberry Pi Pico (RP2040) firmware — the showcase.
+  `#![no_std]`/`#![no_main]` on `thumbv6m-none-eabi` (rp-pico BSP + cortex-m-rt,
+  blocking, `panic-halt`, no allocator). It streams the embedded `FEED` through
+  the shared `SignalEngine` and toggles the on-board LED (GPIO25) on each cross —
+  the same engine as the host reference, so the on-device sequence matches the
+  golden. Workspace-excluded (own target/linker/`panic = "abort"`); a 10.5 KB
+  release ELF, far under the 2 MB flash.
 - `wickra-pico-host`: the host golden generator and byte-exact parity checker.
   `bless` regenerates the CSV feed, the embedded `FEED` const and the expected
   signal sequence from the single feed formula (`100 + 15·sin(i/8) + 0.05·i`,
