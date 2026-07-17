@@ -13,6 +13,11 @@ workspace = true
 
 [dependencies]
 clap = { workspace = true }
+# Platform-independent f32 sin for the feed formula: std's `f32::sin` dispatches
+# to the host libm and differs by ~1 ULP across OSes, which would make the
+# committed const feed drift-guard fail on some CI runners. `libm` is a pure-Rust
+# softfloat, bit-identical everywhere.
+libm = "0.2"
 wickra-pico-signal = { path = "../wickra-pico-signal", version = "0.1", features = ["std"] }
 embedded-data = { path = "../../embedded-data", version = "0.1" }
 

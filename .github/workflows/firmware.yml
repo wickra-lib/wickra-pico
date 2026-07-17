@@ -1,0 +1,55 @@
+name: Firmware
+
+# The hardware gate. The RP2040 firmware is a workspace-excluded crate with its
+# own linker script, target and `panic = "abort"` profile, so it is built here
+# on its own: a real `thumbv6m-none-eabi` release build plus clippy and a size
+# report. If this is red, the demo does not flash.
+#
+# The ESP32 variant (Xtensa, needs espup) and an on-device Renode/QEMU sim of
+# the signal sequence are tracked in ROADMAP.md; they are not gated here yet.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firmware-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_NET_RETRY: "10"
+
+jobs:
+  rp2040:
+    name: rp2040 (thumbv6m)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: firmware/rp-pico
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-rust
+        with:
+          targets: thumbv6m-none-eabi
+          components: clippy, llvm-tools
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: firmware/rp-pico
+      - uses: taiki-e/install-action@c7eb1735f09259a5035e8e5d44b1406b1cddc0fb # v2.83.0
+        with:
+          tool: cargo-binutils
+      # Lint our firmware crate (HAL deps are not linted); -D warnings is set here,
+      # not as a global RUSTFLAGS, so the HAL's own warnings don't fail the build.
+      - run: cargo clippy --target thumbv6m-none-eabi --release -- -D warnings
+      - run: cargo build --target thumbv6m-none-eabi --release
+      # Size report: the release ELF must stay comfortably under the Pico's 2 MB
+      # flash. Printed to the log as the demo's footprint record.
+      - run: cargo size --target thumbv6m-none-eabi --release

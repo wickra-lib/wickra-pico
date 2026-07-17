@@ -444,6 +444,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "embedded-data",
+ "libm",
  "wickra-pico-signal",
 ]
 

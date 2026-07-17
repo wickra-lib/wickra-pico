@@ -24,7 +24,10 @@ pub fn feed() -> [f32; FEED_LEN] {
     let mut out = [0.0f32; FEED_LEN];
     for (i, slot) in out.iter_mut().enumerate() {
         let x = i as f32;
-        *slot = 100.0 + 15.0 * (x / 8.0).sin() + 0.05 * x;
+        // `libm::sinf`, not `f32::sin`: the host libm differs by ~1 ULP across
+        // OSes, so a const blessed on one platform would trip the drift guard on
+        // another. `libm` is bit-identical everywhere.
+        *slot = 100.0 + 15.0 * libm::sinf(x / 8.0) + 0.05 * x;
     }
     out
 }
@@ -66,6 +69,9 @@ fn render_embedded_lib(feed: &[f32]) -> String {
     s.push_str("#![no_std]\n");
     s.push_str("#![allow(clippy::unreadable_literal)] // machine-generated feed literals\n\n");
     writeln!(s, "/// The replay feed: {} price ticks.", feed.len()).unwrap();
+    // One literal per line is the canonical bless layout; keep rustfmt from
+    // reflowing it so `cargo fmt --check` stays green on this generated file.
+    s.push_str("#[rustfmt::skip]\n");
     writeln!(s, "pub const FEED: [f32; {}] = [", feed.len()).unwrap();
     for &price in feed {
         writeln!(s, "    {price:?},").unwrap();
