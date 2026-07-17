@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `docs/`: the demo reproducibility guides — `FLASHING.md` (BOOTSEL UF2 and
+  probe-rs), `WIRING.md` (the on-board GPIO25 LED needs no wiring, plus an
+  external-LED variant) and `VIDEO_SCRIPT.md` (the 30-second "LED blinks on the
+  cross" clip).
 - `golden/`: the cross-target reference corpus — `data/ema_cross.csv`, the
   byte-exact `expected/ema_cross.txt`, and `README.md` documenting the feed
   formula, the `bless` regeneration command, and why the on-device sequence
