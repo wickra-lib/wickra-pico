@@ -6,6 +6,7 @@
 #![allow(clippy::unreadable_literal)] // machine-generated feed literals
 
 /// The replay feed: 128 price ticks.
+#[rustfmt::skip]
 pub const FEED: [f32; 128] = [
     100.0,
     101.92012,
