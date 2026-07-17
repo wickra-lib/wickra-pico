@@ -14,8 +14,10 @@ authors = ["wickra-lib"]
 
 [workspace.dependencies]
 # no_std signal kernel source (Weg A: git-dep on the wickra-embed repo's no_std
-# `embed-core` crate — version-pinned against a deny wildcard).
-embed-core = { git = "https://github.com/wickra-lib/wickra-embed", version = "0.1" }
+# `embed-core` crate — version-pinned against a deny wildcard). `default-features
+# = false` here so consumers get the strictly-no_std crate by default and opt
+# into `std` explicitly (the firmware never does).
+embed-core = { git = "https://github.com/wickra-lib/wickra-embed", version = "0.1", default-features = false }
 clap = { version = "4", features = ["derive"] }
 
 [workspace.lints.rust]
