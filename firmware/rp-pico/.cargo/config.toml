@@ -1,0 +1,12 @@
+[build]
+target = "thumbv6m-none-eabi"
+
+[target.thumbv6m-none-eabi]
+# Flash a connected Pico held in BOOTSEL mode by dragging the UF2:
+runner = "elf2uf2-rs -d"
+# Alternative, with a debug probe:
+# runner = "probe-rs run --chip RP2040"
+rustflags = [
+    "-C", "link-arg=--nmagic",
+    "-C", "link-arg=-Tlink.x",
+]

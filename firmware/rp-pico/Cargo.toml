@@ -1,0 +1,33 @@
+[package]
+name = "wickra-pico-rp-pico"
+description = "RP2040 (Raspberry Pi Pico) firmware for the Wickra Pico EMA-cross LED demo — no_std, bare metal."
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.86"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/wickra-lib/wickra-pico"
+authors = ["wickra-lib"]
+publish = false
+
+[lints.rust]
+# HAL access and the boot2 static are inherently unsafe on bare metal.
+unsafe_code = "allow"
+
+[dependencies]
+cortex-m = "0.7"
+cortex-m-rt = "0.7"
+embedded-hal = "1.0"
+rp-pico = "0.9"
+panic-halt = "1"
+wickra-pico-signal = { path = "../../crates/wickra-pico-signal", default-features = false }
+embedded-data = { path = "../../embedded-data" }
+
+[profile.release]
+panic = "abort"
+lto = true
+opt-level = "z"
+codegen-units = 1
+strip = true
+
+[profile.dev]
+panic = "abort"
