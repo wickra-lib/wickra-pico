@@ -23,6 +23,10 @@ jobs:
     name: Build RP2040 .uf2
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # SLSA build-provenance attestation for the .uf2
+      attestations: write
     defaults:
       run:
         working-directory: firmware/rp-pico
@@ -43,6 +47,10 @@ jobs:
           elf2uf2-rs \
             target/thumbv6m-none-eabi/release/wickra-pico-rp-pico \
             wickra-pico-rp2040.uf2
+      - name: Attest build provenance (SLSA)
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+        with:
+          subject-path: firmware/rp-pico/wickra-pico-rp2040.uf2
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: firmware-uf2
