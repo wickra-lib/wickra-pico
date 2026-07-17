@@ -1,0 +1,32 @@
+[workspace]
+resolver = "2"
+members = ["crates/wickra-pico-signal", "crates/wickra-pico-host", "embedded-data"]
+# firmware/* are DELIBERATELY excluded (own targets/linker scripts) → exclude:
+exclude = ["firmware/rp-pico", "firmware/esp32"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.86"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/wickra-lib/wickra-pico"
+authors = ["wickra-lib"]
+
+[workspace.dependencies]
+# no_std signal kernel source (Weg A: git-dep on the wickra-embed repo's no_std
+# `embed-core` crate — version-pinned against a deny wildcard).
+embed-core = { git = "https://github.com/wickra-lib/wickra-embed", version = "0.1" }
+clap = { version = "4", features = ["derive"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid" # firmware crates locally re-allow (HAL/unsafe unavoidable)
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+
+[profile.release]
+lto = true
+codegen-units = 1
+# NOTE: panic="abort" is NOT set here in the root (host tests need unwind); the
+# firmware crates set panic="abort" locally.

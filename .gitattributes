@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.sh text eol=lf
+*.resc text eol=lf
+*.uf2 binary
+*.bin binary
+*.elf binary

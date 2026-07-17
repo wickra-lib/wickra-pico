@@ -1,0 +1,41 @@
+# cargo-deny configuration — supply-chain gate (advisories, licenses, bans, sources).
+#
+# Scope note: the `firmware/*` crates are workspace-EXCLUDED (own targets/linker),
+# so `cargo deny check` audits the host workspace members. The firmware crates
+# (embassy-rp / rp-hal / esp-hal) pull many transitive crates and are audited
+# separately if needed.
+
+[advisories]
+version = 2
+yanked = "deny"
+# Suppressed advisories (assessed as not affecting wickra-pico). Keep in
+# lock-step with osv-scanner.toml.
+ignore = []
+
+[licenses]
+version = 2
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Zlib",
+    "MPL-2.0",
+]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "warn"
+# Wildcards are denied; the one git dependency (embed-core) carries a `version`
+# pin, so it is not a wildcard.
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+# The no_std signal kernel is consumed as a git dependency from the wickra-embed
+# repo (Weg A). Allow exactly that source; everything else stays denied.
+allow-git = ["https://github.com/wickra-lib/wickra-embed"]

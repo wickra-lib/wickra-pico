@@ -1,0 +1,5 @@
+/target
+firmware/*/target
+**/*.uf2
+**/*.bin
+**/*.elf

@@ -1,0 +1,1 @@
+doc-valid-idents = ["EMA", "RP2040", "ESP32", "GPIO", "UART", "LED", "PWM", "SPI", "I2C", "USB", "MCU", "SRAM", "OHLCV", "wickra-embed", "no_std", ".."]

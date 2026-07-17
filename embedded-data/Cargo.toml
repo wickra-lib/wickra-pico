@@ -1,0 +1,14 @@
+[package]
+name = "embedded-data"
+description = "The embedded replay feed (a const tick array) for the Wickra Pico demo."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]

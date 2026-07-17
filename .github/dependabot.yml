@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Host workspace (root) — pico-signal, pico-host, embedded-data.
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      cargo:
+        patterns:
+          - "*"
+
+  # Firmware crate: Raspberry Pi Pico (RP2040, thumbv6m) — own manifest.
+  - package-ecosystem: cargo
+    directory: "/firmware/rp-pico"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      firmware-rp-pico:
+        patterns:
+          - "*"
+
+  # Firmware crate: ESP32 — own manifest.
+  - package-ecosystem: cargo
+    directory: "/firmware/esp32"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      firmware-esp32:
+        patterns:
+          - "*"
+
+  # GitHub Actions workflows.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"
