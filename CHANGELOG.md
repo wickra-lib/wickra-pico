@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `golden/`: the cross-target reference corpus — `data/ema_cross.csv`, the
+  byte-exact `expected/ema_cross.txt`, and `README.md` documenting the feed
+  formula, the `bless` regeneration command, and why the on-device sequence
+  matches the golden by construction (identical engine + feed) plus the host
+  `check` and drift-guard verifications.
 - `firmware/rp-pico`: the Raspberry Pi Pico (RP2040) firmware — the showcase.
   `#![no_std]`/`#![no_main]` on `thumbv6m-none-eabi` (rp-pico BSP + cortex-m-rt,
   blocking, `panic-halt`, no allocator). It streams the embedded `FEED` through
