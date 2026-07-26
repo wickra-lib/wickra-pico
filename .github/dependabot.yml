@@ -4,7 +4,9 @@ updates:
   - package-ecosystem: cargo
     directory: "/"
     schedule:
-      interval: weekly
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
     cooldown:
       default-days: 7
     groups:
@@ -16,7 +18,9 @@ updates:
   - package-ecosystem: cargo
     directory: "/firmware/rp-pico"
     schedule:
-      interval: weekly
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
     cooldown:
       default-days: 7
     groups:
@@ -28,7 +32,9 @@ updates:
   - package-ecosystem: cargo
     directory: "/firmware/esp32"
     schedule:
-      interval: weekly
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
     cooldown:
       default-days: 7
     groups:
@@ -40,7 +46,9 @@ updates:
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: weekly
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
     cooldown:
       default-days: 7
     groups:
