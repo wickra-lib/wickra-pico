@@ -97,7 +97,7 @@ checksum = "91622ff5e7162018101f2fea40d6ebf4a78bbe5a49736a2020649edf9693679e"
 [[package]]
 name = "embed-core"
 version = "0.1.0"
-source = "git+https://github.com/wickra-lib/wickra-embed#3edc654749b0cafcb4961ee52ce4b1d6101e120b"
+source = "git+https://github.com/wickra-lib/wickra-embed#a59a235ffa0bbbb7848dabcf0a99ca885b09f040"
 dependencies = [
  "libm",
 ]
