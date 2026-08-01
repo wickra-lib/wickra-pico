@@ -37,7 +37,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: thumbv6m-none-eabi
-      - uses: taiki-e/install-action@07b4745e0c39a41822af610387492e3e53aa222b # v2.83.4
+      - uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
         with:
           tool: elf2uf2-rs
       - name: Build release firmware
