@@ -4,10 +4,15 @@
 
 [![Built on Wickra](https://img.shields.io/badge/built%20on-wickra-3b82f6)](https://github.com/wickra-lib/wickra)
 [![Status](https://img.shields.io/badge/status-pre--release-orange)](https://github.com/wickra-lib/wickra-pico)
-[![CI](https://github.com/wickra-lib/wickra-pico/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/ci.yml)
+[![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/ci.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/ci.yml)
+[![CodeQL](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/codeql.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/codeql.yml)
+[![GitHub release](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/release.svg)](https://github.com/wickra-lib/wickra-pico/releases/latest)
+[![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/license.svg)](#license)
+[![OpenSSF Scorecard](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/scorecard.svg)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra-pico)
+[![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/best-practices.svg)](https://www.bestpractices.dev)
+[![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/provenance.svg)](https://github.com/wickra-lib/wickra-pico/attestations)
+[![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/docs.svg)](https://wickra.org)
 [![Firmware](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml/badge.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml)
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
-[![OpenSSF Scorecard](https://img.shields.io/badge/OpenSSF-Scorecard-3b82f6)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra-pico)
 [![Cross-target deterministic](https://img.shields.io/badge/cross--target-deterministic-3b82f6)](docs/DETERMINISM.md)
 
 ---
@@ -140,3 +145,26 @@ at your option. Unless you explicitly state otherwise, any contribution
 intentionally submitted for inclusion in this work, as defined in the Apache-2.0
 license, shall be dual-licensed as above, without any additional terms or
 conditions.
+
+---
+
+<p align="center">
+  <a href="https://github.com/wickra-lib/wickra-pico">
+    <img alt="GitHub stars" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/stars.svg">
+  </a>
+  <a href="https://github.com/wickra-lib/wickra-pico/network/members">
+    <img alt="GitHub forks" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/forks.svg">
+  </a>
+  <a href="https://github.com/wickra-lib/wickra-pico/issues">
+    <img alt="GitHub issues" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/issues.svg">
+  </a>
+</p>
+
+<p align="center">
+  Built on <a href="https://github.com/wickra-lib/wickra">Wickra</a>. If it saved you time, the cheapest way to say thanks is to ⭐ the repo.
+</p>
+
+<p align="center">
+  <img alt="wickra-pico star history" width="640"
+       src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/star-history.svg">
+</p>
