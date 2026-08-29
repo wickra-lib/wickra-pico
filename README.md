@@ -21,7 +21,7 @@
 
 **Wickra's O(1) indicator core running bare-metal on a $5 Raspberry Pi Pico — the LED blinks on the EMA cross.**
 
-> **Part of the [Wickra ecosystem](https://github.com/wickra-lib):** the same
+> **Part of the [Wickra ecosystem](https://github.com/wickra-lib):** the same data-driven core and ten-language binding surface also power [wickra-exchange](https://github.com/wickra-lib/wickra-exchange), [wickra-backtest](https://github.com/wickra-lib/wickra-backtest), [wickra-terminal](https://github.com/wickra-lib/wickra-terminal) and 20 more — see [the full list](https://github.com/wickra-lib).
 > streaming indicator core that powers
 > [wickra-backtest](https://github.com/wickra-lib/wickra-backtest) and
 > [wickra-screener](https://github.com/wickra-lib/wickra-screener) also runs
