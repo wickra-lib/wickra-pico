@@ -3,4 +3,24 @@
 # assessed as not affecting wickra-pico; this mirrors the cargo-deny `ignore`
 # list in deny.toml at the OSV layer.
 #
-# Keep in lock-step with deny.toml's [advisories].ignore. No suppressions yet.
+# Keep in lock-step with deny.toml's [advisories].ignore.
+#
+# Both entries below reach the repository only through firmware/rp-pico/Cargo.lock,
+# the RP2040 firmware's own lock: rp-pico 0.9 -> rp2040-hal 0.10 -> cortex-m 0.7
+# and pio 0.2. The firmware is a flashed demo image; nothing here is published
+# to a registry, and the host workspace (what cargo-deny audits) carries neither
+# crate. Both clear when rp2040-hal moves to a cortex-m line without bare-metal
+# and a pio without paste.
+
+# bare-metal is deprecated (RUSTSEC-2026-0110, informational, no fix); cortex-m
+# 0.7.9, the current cortex-m line, still depends on it.
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0110"
+reason = "bare-metal is deprecated, not defective; reached only through cortex-m 0.7 in the RP2040 firmware lock, never in a published crate. Clears when cortex-m drops it."
+
+# paste is unmaintained (RUSTSEC-2024-0436, informational, no fix): a
+# compile-time proc-macro that rp2040-hal and pio expand at build time; it
+# contributes no code to the firmware image.
+[[IgnoredVulns]]
+id = "RUSTSEC-2024-0436"
+reason = "paste is an unmaintained compile-time proc-macro reached through rp2040-hal and pio in the RP2040 firmware lock; it ships no code in the image. Clears when rp2040-hal drops it."
