@@ -1,7 +1,7 @@
 //! The shared, `no_std` EMA-cross signal engine for Wickra Pico.
 //!
 //! [`SignalEngine`] streams prices through an EMA(9)/EMA(21) cross built on
-//! `embed-core`'s allocation-free indicator kernel and emits a [`Signal`] on
+//! `wickra-embed-core`'s allocation-free indicator kernel and emits a [`Signal`] on
 //! each cross. The crate is `#![no_std]` and scalar-only, so the identical code
 //! runs in the microcontroller firmware and in the `std` host reference and unit
 //! tests — that is what makes the demo both testable and cross-target
