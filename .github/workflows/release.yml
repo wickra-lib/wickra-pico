@@ -139,7 +139,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: thumbv6m-none-eabi
-      - uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b # v2.87.4
+      - uses: taiki-e/install-action@d438492cf8a250514fa2d34b30bc3c0dc37c65ff # v2.87.8
         with:
           tool: elf2uf2-rs
       - name: Build release firmware
@@ -188,7 +188,7 @@ jobs:
           cp golden/data/ema_cross.csv dist/
           cp golden/expected/ema_cross.txt dist/
           ls -la dist
-      - uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+      - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: wickra-pico ${{ steps.tag.outputs.tag }}
