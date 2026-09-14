@@ -10,17 +10,17 @@ reference — cross-target determinism.
 The indicator kernel must be `no_std` (no OS, no allocator). Two paths were on
 the table:
 
-- **Weg A (chosen): depend on `wickra-embed-core`.** The
+- **Path A (chosen): depend on `wickra-embed-core`.** The
   [`wickra-embed`](https://github.com/wickra-lib/wickra-embed) repo ships
   `wickra-embed-core` — an allocation-free, `#![no_std]`, `forbid(unsafe_code)`
   crate with the streaming `Indicator` trait and `Ema`/`Sma`/`Rsi`/`Atr`/`Roc`,
   byte-exact against the main `wickra-core`. Wickra Pico consumes it from
   crates.io, pinned exactly (`wickra-embed-core = "=0.1.0"`).
-- **Weg B (fallback, not taken): make `wickra-core` no_std.** An upstream change
+- **Path B (fallback, not taken): make `wickra-core` no_std.** An upstream change
   to the main `wickra` repo giving `wickra-core` a `no_std` feature. Not needed —
   `wickra-embed-core` already exists and is verified.
 
-`wickra-core` v0.9 is `std` (uses `thiserror`, optional `rayon`), so it is **not**
+`wickra-core` 1.0 is `std` (uses `thiserror`, optional `rayon`), so it is **not**
 usable directly on bare metal; `wickra-embed-core` is the no_std path.
 
 ## Workspace
