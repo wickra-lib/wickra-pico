@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-14
+
 ### Changed
 
 - **The kernel is the published `wickra-embed-core`.** The signal crate
@@ -85,4 +87,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `firmware/*` crates excluded, and the `no_std`-kernel decision (path A:
   depend on `wickra-embed-core` — see `ARCHITECTURE.md`).
 
-[Unreleased]: https://github.com/wickra-lib/wickra-pico/commits/main
+[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/wickra-lib/wickra-pico/releases/tag/v0.1.0
