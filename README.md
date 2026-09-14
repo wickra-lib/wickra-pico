@@ -37,8 +37,20 @@ runs without an operating system. The on-device signal sequence is verified
 guarantee the rest of the ecosystem makes across languages.
 
 The `no_std` indicator kernel comes from
-[`embed-core`](https://github.com/wickra-lib/wickra-embed) (allocation-free,
-`#![no_std]`, `forbid(unsafe_code)`), consumed as a git dependency.
+[`wickra-embed-core`](https://github.com/wickra-lib/wickra-embed) (allocation-free,
+`#![no_std]`, `forbid(unsafe_code)`), from crates.io.
+
+```bash
+# Verify the golden signal sequence on the host, then build the firmware:
+cargo run -p wickra-pico-host -- check
+( cd firmware/rp-pico && cargo build --target thumbv6m-none-eabi --release )
+```
+
+## Documentation
+
+The reference documentation lives at **[pico.wickra.org](https://pico.wickra.org)**.
+What stays beside the code is in [`docs/`](docs/README.md): the signal, the
+determinism argument, wiring and flashing.
 
 ## How it works
 
@@ -93,36 +105,98 @@ and drag the file onto the `RPI-RP2` drive. The full instructions — including 
 (none needed, plus an external-LED variant) are in
 [docs/WIRING.md](docs/WIRING.md).
 
-## Workspace layout
+## Project layout
 
 ```
-crates/wickra-pico-signal   no_std signal kernel over embed-core's EMA cross
+crates/wickra-pico-signal   no_std signal kernel over wickra-embed-core's EMA cross
 crates/wickra-pico-host     std golden-reference generator + parity checker
 embedded-data/              the generated const replay feed
 firmware/rp-pico            RP2040 firmware (workspace-excluded: own target)
 golden/                     the cross-target reference corpus
 ```
 
-## Building from source
+## Building everything from source
 
 ```bash
 # Host workspace members (signal kernel, host reference, feed):
-cargo build
-cargo test
+cargo build --workspace
+cargo test --workspace --all-features
+cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo run -p wickra-pico-host -- check   # verify the golden sequence
 
+# The kernel for the Cortex-M0+, allocation-free, std off:
+cargo build -p wickra-pico-signal --no-default-features --target thumbv6m-none-eabi
+
 # RP2040 firmware (its own excluded crate):
-cd firmware/rp-pico
-cargo build --target thumbv6m-none-eabi --release
+( cd firmware/rp-pico && cargo build --target thumbv6m-none-eabi --release )
 ```
 
 The firmware is excluded from the host workspace — it builds for a bare-metal
 target with its own linker script and `panic = "abort"` profile; see
 [ARCHITECTURE.md](ARCHITECTURE.md).
 
+## Testing
+
+Run the suites with the commands in
+[Building everything from source](#building-everything-from-source).
+
+- **`wickra-pico-signal`** — unit and property tests over the EMA cross, and
+  the byte-parity tests against the std `wickra-core`: the same ticks through
+  the no_std kernel and the reference produce the same signals.
+- **`wickra-pico-host`** — recomputes the signal sequence over the golden
+  series and asserts it equals `golden/expected/ema_cross.txt` byte-for-byte,
+  the host half of the cross-target guarantee.
+- **The firmware** — `firmware.yml` cross-compiles it for `thumbv6m-none-eabi`
+  on every push; the on-device run reproduces the same sequence.
+- **Bench** — `cargo bench -p wickra-pico-signal` times `on_tick` on the host;
+  see [BENCHMARKS.md](BENCHMARKS.md).
+
+## Benchmarks
+
+The per-update cost of the signal kernel on the host and, once measured, in
+cycles on the RP2040 — see [BENCHMARKS.md](BENCHMARKS.md); reproduce with
+`cargo bench -p wickra-pico-signal`.
+
 ## Requirements
 
-- Rust 1.86+ (MSRV); the `thumbv6m-none-eabi` target for the RP2040 firmware.
+- **Rust 1.86+** — the workspace MSRV.
+- The **`thumbv6m-none-eabi`** target for the RP2040 firmware
+  (`rustup target add thumbv6m-none-eabi`), and `elf2uf2-rs` to turn the ELF
+  into a drag-and-drop `.uf2`.
+- A **Raspberry Pi Pico** (RP2040) to run it; the host suite needs no hardware.
+
+## Ecosystem
+
+Part of the [Wickra](https://github.com/wickra-lib/wickra) family — each one a
+data-driven core with a CLI and the same ten-language binding surface:
+
+- [**wickra**](https://github.com/wickra-lib/wickra) — main library (Rust core + Python / Node.js / WASM bindings + a C ABI for C / C++ / C# / Go / Java / R)
+- [**wickra-playground**](https://github.com/wickra-lib/wickra-playground) — a polyglot strategy playground: one StrategySpec live side by side in Python, Rust, JS and Go, entirely in the browser
+- [**wickra-exchange**](https://github.com/wickra-lib/wickra-exchange) — unified market-data + execution across ten crypto exchanges
+- [**wickra-backtest**](https://github.com/wickra-lib/wickra-backtest) — event-driven backtester over the Wickra core
+- [**wickra-terminal**](https://github.com/wickra-lib/wickra-terminal) — the trading terminal: a TUI and a browser renderer over the stack
+- [**wickra-screener**](https://github.com/wickra-lib/wickra-screener) — parallel multi-symbol screening over 514 streaming indicators
+- [**wickra-xray**](https://github.com/wickra-lib/wickra-xray) — market-microstructure explorer: footprint, order-book heatmap, liquidation map, funding/OI divergence
+- [**wickra-copilot**](https://github.com/wickra-lib/wickra-copilot) — local market copilot grounded in real order-book, liquidation and funding microstructure
+- [**wickra-shazam**](https://github.com/wickra-lib/wickra-shazam) — match an asset's current microstructure fingerprint against its entire history
+- [**wickra-benchmark**](https://github.com/wickra-lib/wickra-benchmark) — reproducible, golden-verified benchmark suite — recompute any (strategy, dataset, report) in ten languages and confirm it byte-for-byte
+- [**wickra-strategy-ci**](https://github.com/wickra-lib/wickra-strategy-ci) — Jest for trading strategies: golden-pin the report, catch regressions in CI, property-test against fuzzed data
+- [**wickra-verify**](https://github.com/wickra-lib/wickra-verify) — confirm or refute a claimed backtest report against its strategy and data, in ten languages
+- [**wickra-proof**](https://github.com/wickra-lib/wickra-proof) — Proof-of-Backtest: deterministic (spec, data) → report + blake3 hash, recomputable byte-for-byte in ten languages
+- [**wickra-zk**](https://github.com/wickra-lib/wickra-zk) — prove a backtest zero-knowledge — on-chain-verifiable performance without revealing the data or the strategy
+- [**wickra-impact**](https://github.com/wickra-lib/wickra-impact) — the backtester that knows you would have moved the market: agent-based fills on the real historical L2 order book
+- [**wickra-darwin**](https://github.com/wickra-lib/wickra-darwin) — evolutionary strategy search at millions of backtests per second, mutating and crossing JSON specs across the 514-indicator space
+- [**wickra-gym**](https://github.com/wickra-lib/wickra-gym) — a Gymnasium-compatible, microstructure-aware backtest environment with O(1) steps for deterministic RL rollouts
+- [**wickra-feature-store**](https://github.com/wickra-lib/wickra-feature-store) — OHLCV and microstructure streams into ML-ready feature matrices over 514 O(1) streaming indicators
+- [**wickra-genome**](https://github.com/wickra-lib/wickra-genome) — a vector database of the whole market: every asset a 514-dim live vector, for similarity search, clustering and anomaly detection
+- [**wickra-timemachine**](https://github.com/wickra-lib/wickra-timemachine) — scrub the whole market like a video — every symbol, full order book, rewound to any moment via deterministic re-fold
+- [**wickra-synth**](https://github.com/wickra-lib/wickra-synth) — deterministic synthetic market microstructure: OHLCV, order book, trades and funding from a single seed
+- [**wickra-compile**](https://github.com/wickra-lib/wickra-compile) — compile a strategy spec into a standalone deployable: a WASM module, a self-contained binary, or a `no_std` artifact
+- [**wickra-embed**](https://github.com/wickra-lib/wickra-embed) — allocation-free, `no_std` streaming indicators for bare-metal and HFT, byte-for-byte identical to the core
+- [**wickra-pico**](https://github.com/wickra-lib/wickra-pico) — the O(1) indicator core running bare-metal on a $5 Raspberry Pi Pico — the LED blinks on the EMA cross
+
+Docs at [docs.wickra.org](https://docs.wickra.org); the marketing site and
+in-browser demo at [wickra.org](https://wickra.org).
 
 ## Contributing
 
@@ -145,6 +219,12 @@ at your option. Unless you explicitly state otherwise, any contribution
 intentionally submitted for inclusion in this work, as defined in the Apache-2.0
 license, shall be dual-licensed as above, without any additional terms or
 conditions.
+
+## Disclaimer
+
+Wickra Pico is a hardware demonstration, provided "as is" without warranty of
+any kind. The signal it blinks is an EMA cross over an embedded replay feed;
+nothing here is financial advice, and trading carries risk of loss.
 
 ---
 

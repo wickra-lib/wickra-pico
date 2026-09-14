@@ -25,17 +25,19 @@ paths produce a **byte-identical** result.
 
 ## Results
 
-Numbers land as the bench (phase P5) and the on-device measurement (phase P6) are
-built out. The host column is measured (`cargo bench -p wickra-pico-signal`,
-criterion median on x86-64 local dev, rounded — indicative, not a CI-pinned
-regression gate; the nightly bench tracks drift). The RP2040 column lands with the
+The host column is measured by `cargo bench -p wickra-pico-signal`
+(`benches/signal.rs`: `on_tick` on the steady-state path past the EMA warmup,
+criterion median on a Ryzen 9 9950X, Windows, Rust 1.92, rounded — indicative,
+not a CI-pinned regression gate; the nightly bench tracks drift and CodSpeed
+counts instructions on every pull request). The RP2040 column lands with the
 on-device SysTick measurement.
 
-| Signal              | Host (ns/update) | RP2040 Cortex-M0+ (cycles/update) | Allocations |
-|---------------------|------------------|-----------------------------------|-------------|
-| `Ema<9>`            | ~13              | _pending_                         | 0           |
-| `Ema<21>`           | ~13              | _pending_                         | 0           |
-| EMA(9)/EMA(21) cross| ~27              | _pending_                         | 0           |
+| Signal               | Host (ns/update) | RP2040 Cortex-M0+ (cycles/update) | Allocations |
+|----------------------|------------------|-----------------------------------|-------------|
+| EMA(9)/EMA(21) cross | ~6               | _pending_                         | 0           |
+
+A full replay from reset over 4096 ticks (`on_tick from reset over 4096
+ticks`) takes ~17 µs, i.e. ~4 ns per tick including the warmup.
 
 Each EMA update is a single multiply-add on the running value, so the cost is flat
 regardless of the period; the cross is just the two updates plus a comparison. The

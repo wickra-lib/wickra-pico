@@ -1,11 +1,11 @@
 //! The allocation-free EMA-cross signal engine.
 //!
 //! This is the whole trading logic of the demo, and it is `no_std` and
-//! scalar-only: two EMAs from `embed-core` plus the sign of their difference.
+//! scalar-only: two EMAs from `wickra-embed-core` plus the sign of their difference.
 //! The firmware links this crate and calls [`SignalEngine::on_tick`] once per
 //! price; it contains no signal logic of its own.
 
-use embed_core::{Ema, Indicator};
+use wickra_embed_core::{Ema, Indicator};
 
 use crate::signal::Signal;
 

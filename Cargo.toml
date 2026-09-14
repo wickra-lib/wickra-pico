@@ -2,7 +2,9 @@
 resolver = "2"
 members = ["crates/wickra-pico-signal", "crates/wickra-pico-host", "embedded-data"]
 # firmware/* are DELIBERATELY excluded (own targets/linker scripts) → exclude:
-exclude = ["firmware/rp-pico", "firmware/esp32"]
+# cargo-fuzz builds fuzz/ on its own, with sanitizer flags the workspace must
+# not inherit, so it is excluded rather than a member.
+exclude = ["firmware/rp-pico", "fuzz"]
 
 [workspace.package]
 version = "0.1.0"
@@ -13,12 +15,17 @@ repository = "https://github.com/wickra-lib/wickra-pico"
 authors = ["wickra-lib"]
 
 [workspace.dependencies]
-# no_std signal kernel source (Weg A: git-dep on the wickra-embed repo's no_std
-# `embed-core` crate — version-pinned against a deny wildcard). `default-features
-# = false` here so consumers get the strictly-no_std crate by default and opt
-# into `std` explicitly (the firmware never does).
-embed-core = { git = "https://github.com/wickra-lib/wickra-embed", version = "0.1", default-features = false }
+# The no_std signal kernel: wickra-embed-core from crates.io, pinned exactly as
+# the released siblings pin each other -- a newer patch must not leave two
+# copies of the kernel in one graph. `default-features = false` here so
+# consumers get the strictly-no_std crate by default and opt into `std`
+# explicitly (the firmware never does).
+wickra-embed-core = { version = "=0.1.0", default-features = false }
 clap = { version = "4", features = ["derive"] }
+# codspeed-criterion-compat is a drop-in for criterion: the bench keeps its
+# criterion API and runs as criterion locally, but under `cargo codspeed` it
+# reports measurements instead of merely executing.
+criterion = { package = "codspeed-criterion-compat", version = "5.0.1" }
 
 [workspace.lints.rust]
 unsafe_code = "forbid" # firmware crates locally re-allow (HAL/unsafe unavoidable)

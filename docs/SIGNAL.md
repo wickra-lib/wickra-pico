@@ -12,14 +12,14 @@ allocation-free. Its state is three scalars:
 
 ```rust
 pub struct SignalEngine {
-    ema_fast: Ema,          // EMA(9),  from embed-core
-    ema_slow: Ema,          // EMA(21), from embed-core
+    ema_fast: Ema,          // EMA(9),  from wickra-embed-core
+    ema_slow: Ema,          // EMA(21), from wickra-embed-core
     prev_diff: Option<f64>, // last (fast - slow) with both EMAs defined
 }
 ```
 
 `FAST = 9`, `SLOW = 21`. The two `Ema`s come from
-[`embed-core`](https://github.com/wickra-lib/wickra-embed) — the `no_std`,
+[`wickra-embed-core`](https://github.com/wickra-lib/wickra-embed) — the `no_std`,
 `forbid(unsafe_code)` Wickra indicator kernel — so the arithmetic is the same
 one the rest of the ecosystem ships, not a re-implementation.
 

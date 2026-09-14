@@ -9,8 +9,14 @@
 version = 2
 yanked = "deny"
 # Suppressed advisories (assessed as not affecting wickra-pico). Keep in
-# lock-step with osv-scanner.toml.
-ignore = []
+# lock-step with osv-scanner.toml. Both are informational advisories on
+# crates the RP2040 firmware lock pulls through rp2040-hal; the host
+# workspace this file audits carries neither, and the entries are here so
+# the two files stay one list.
+ignore = [
+    { id = "RUSTSEC-2026-0110", reason = "bare-metal is deprecated, not defective; cortex-m 0.7 in the RP2040 firmware lock only, nothing published carries it" },
+    { id = "RUSTSEC-2024-0436", reason = "paste is an unmaintained compile-time proc-macro reached through rp2040-hal and pio in the RP2040 firmware lock; no code in the image" },
+]
 
 [licenses]
 version = 2
@@ -29,13 +35,10 @@ confidence-threshold = 0.93
 
 [bans]
 multiple-versions = "warn"
-# Wildcards are denied; the one git dependency (embed-core) carries a `version`
-# pin, so it is not a wildcard.
+# Wildcards are denied.
 wildcards = "deny"
 
 [sources]
 unknown-registry = "deny"
 unknown-git = "deny"
-# The no_std signal kernel is consumed as a git dependency from the wickra-embed
-# repo (Weg A). Allow exactly that source; everything else stays denied.
-allow-git = ["https://github.com/wickra-lib/wickra-embed"]
+# Every dependency comes from crates.io; no git source is allowed.

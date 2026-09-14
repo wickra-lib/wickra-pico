@@ -5,7 +5,10 @@ name: Release
 # (`.uf2`) plus the golden corpus and attaches them to a GitHub Release, so
 # anyone can drag-drop the demo onto a Pico without a Rust toolchain.
 #
-# Fires only on a `v*` tag (an irreversible, maintainer-only step — USER-GO).
+# The shape is the family's: a guard refuses anything but a v* tag, a gate
+# refuses a tagged commit whose CI is not green, the firmware is built and its
+# provenance attested, the release is assembled as a draft and flipped to
+# published only once every asset is on it.
 on:
   push:
     tags: ["v*"]
@@ -17,10 +20,109 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   CARGO_NET_RETRY: "10"
+  CARGO_NET_GIT_FETCH_WITH_CLI: "true"
 
 jobs:
+  # A manual dispatch from a branch must not produce a release: the assets
+  # would carry a version no tag names. The guard is the first job every
+  # producer needs.
+  guard:
+    name: Refuse to release from anything but a tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check the ref
+        env:
+          REF: ${{ github.ref }}
+        shell: bash
+        run: |
+          case "$REF" in
+            refs/tags/v*)
+              echo "releasing from $REF"
+              ;;
+            *)
+              echo "::error::release.yml publishes a GitHub Release with the firmware image. It runs on a v* tag; got '$REF'. Re-run this workflow with a tag ref."
+              exit 1
+              ;;
+          esac
+
+  # The tag must name the version the manifests declare, so the release page
+  # and the firmware agree on what was shipped.
+  version:
+    name: The tag names the declared version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [guard]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compare
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          declared=$(sed -n 's/^version = "\([0-9][^"]*\)"/\1/p' Cargo.toml | head -n1)
+          if [ "v$declared" != "$REF_NAME" ]; then
+            echo "::error::the tag is $REF_NAME but Cargo.toml declares $declared"
+            exit 1
+          fi
+          echo "v$declared"
+
+  # Nothing is assembled before the tagged commit has passed CI: a release
+  # built from a red commit is a release of something the tests refused.
+  gate:
+    name: Nothing releases before this
+    needs: [version]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: The tagged commit must have passed CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          deadline=$(( $(date +%s) + 45 * 60 ))
+          while :; do
+            ci_state=$(gh api "repos/${REPO}/actions/workflows/ci.yml/runs?head_sha=${SHA}&per_page=1" \
+                 -q '(.workflow_runs[0] // {}) | "\(.status // "missing") \(.conclusion // "null")"')
+            ci_status=${ci_state%% *}
+            ci=${ci_state##* }
+            if [ "$ci" = "success" ]; then
+              break
+            fi
+            if [ "$ci" != "null" ]; then
+              echo "::error::ci.yml on ${SHA} is ${ci}; refusing to release"
+              exit 1
+            fi
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::ci.yml on ${SHA} did not finish within 45 minutes (${ci_status}); refusing to release"
+              exit 1
+            fi
+            echo "ci.yml on ${SHA}: ${ci_status} -- waiting"
+            sleep 30
+          done
+          echo "ci.yml on ${SHA}: success"
+          bad=$(gh api "repos/${REPO}/actions/runs?head_sha=${SHA}&per_page=100" \
+                  -q '[.workflow_runs[] | select(.name != "Release")]
+                      | group_by(.name) | map(max_by(.id))
+                      | map(select(.conclusion == "failure" or .conclusion == "timed_out"
+                                   or .conclusion == "cancelled"))
+                      | map(.name) | unique | join(", ")')
+          if [ -n "$bad" ]; then
+            echo "::error::the tagged commit has failing runs (${bad}); refusing to release"
+            exit 1
+          fi
+          echo "every workflow that ran on this commit is green"
+
   firmware-uf2:
     name: Build RP2040 .uf2
+    needs: [gate]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -37,7 +139,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: thumbv6m-none-eabi
-      - uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+      - uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b # v2.87.4
         with:
           tool: elf2uf2-rs
       - name: Build release firmware
@@ -48,7 +150,7 @@ jobs:
             target/thumbv6m-none-eabi/release/wickra-pico-rp-pico \
             wickra-pico-rp2040.uf2
       - name: Attest build provenance (SLSA)
-        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: firmware/rp-pico/wickra-pico-rp2040.uf2
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -58,16 +160,25 @@ jobs:
           if-no-files-found: error
 
   github-release:
-    name: Publish GitHub Release
+    name: Attach assets to the draft GitHub Release
     needs: [firmware-uf2]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: write # create the release and upload the .uf2 + golden assets
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Resolve target tag
+        id: tag
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          echo "tag=$REF_NAME" >> "$GITHUB_OUTPUT"
+          echo "::notice::attaching assets to release $REF_NAME"
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: firmware-uf2
@@ -79,8 +190,39 @@ jobs:
           ls -la dist
       - uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: wickra-pico ${{ steps.tag.outputs.tag }}
           draft: true
+          generate_release_notes: true
+          fail_on_unmatched_files: true
           files: |
             dist/wickra-pico-rp2040.uf2
             dist/ema_cross.csv
             dist/ema_cross.txt
+          body: |
+            wickra-pico ${{ github.ref_name }} — Wickra's O(1) indicator core running bare-metal on a Raspberry Pi Pico: the LED blinks on the EMA cross. Flash `wickra-pico-rp2040.uf2` by drag-and-drop; `ema_cross.csv` and `ema_cross.txt` are the golden series and the signal sequence the firmware reproduces byte-for-byte.
+
+            The `.uf2` carries a SLSA build-provenance attestation: `gh attestation verify wickra-pico-rp2040.uf2 --owner wickra-lib`.
+
+  # The draft becomes the published, latest release only once every asset is
+  # on it: a reader who follows the release link never sees a half-built page.
+  publish-release:
+    name: Publish the GitHub Release
+    timeout-minutes: 10
+    needs: [github-release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Flip the draft release to published (latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.github-release.outputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$TAG" ]; then
+            echo "::error::no tag resolved from github-release; cannot publish."
+            exit 1
+          fi
+          echo "::notice::publishing release $TAG (draft -> published, latest)"
+          gh release edit "$TAG" --draft=false --latest --repo "$REPO"

@@ -1,9 +1,10 @@
 name: CodeQL
 
-# Static analysis security testing. Analyses the Rust core with GitHub's CodeQL
-# engine; the Python / JavaScript binding surfaces are added to the matrix when
-# those bindings land (P-FS-3). Results appear under Security -> Code scanning.
-# `build-mode: none` analyses source directly — no compilation step.
+# Static analysis security testing over the Rust workspace: the no_std signal
+# kernel, the host generator and the embedded-data feed. `build-mode: none`
+# analyses source directly. .github/codeql/codeql-config.yml keeps the
+# firmware's linker scripts and the golden corpus out of the analysis.
+
 on:
   push:
     branches: [main]
@@ -12,6 +13,10 @@ on:
   schedule:
     - cron: '31 3 * * 0' # Sundays 03:31 UTC
 
+# Least-privilege default for the auto-injected GITHUB_TOKEN. The analyze job
+# raises exactly the scopes CodeQL needs (security-events: write to upload
+# results) in its own job-level block below; this top-level read-only default
+# covers any future job (OpenSSF Scorecard: Token-Permissions).
 permissions:
   contents: read
 
@@ -19,6 +24,7 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       security-events: write # upload CodeQL results to code-scanning
       packages: read
@@ -37,12 +43,13 @@ jobs:
           persist-credentials: false
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
+          config-file: ./.github/codeql/codeql-config.yml
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           category: "/language:${{ matrix.language }}"

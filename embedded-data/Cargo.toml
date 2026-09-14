@@ -2,6 +2,8 @@
 name = "embedded-data"
 description = "The embedded replay feed (a const tick array) for the Wickra Pico demo."
 version.workspace = true
+# The feed the firmware embeds; a workspace member, never a package of its own.
+publish = false
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true

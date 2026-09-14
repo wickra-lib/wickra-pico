@@ -7,7 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The kernel is the published `wickra-embed-core`.** The signal crate
+  depended on the wickra-embed repository by git under the crate's
+  pre-release name; it depends on `wickra-embed-core` 0.1.0 from crates.io
+  now, pinned exactly as the released siblings pin each other, so a newer
+  patch cannot leave two copies of the kernel in one graph. The firmware lock
+  follows.
+- **The repository has the family's shape.** SPDX-named licence copies under
+  `LICENSES/` and beside each crate, a `docs/` index, the detailed issue and
+  pull-request templates written for a firmware repository, Dependabot over
+  the fuzz manifest, and no `rust-toolchain.toml`: CI pins its toolchains per
+  job and installs the bare-metal target it needs; a local checkout uses its
+  own.
+- **CI and the release front.** Pull requests build against `main` only;
+  the flake-resilience environment is set once; coverage uploads under the
+  repository slug; osv-scanner, a fuzz smoke and the repository checks
+  (`scripts/check_version_sync.py`, `scripts/check_license_copies.py`) run on
+  every change; actionlint, the bench, CodSpeed, Scorecard and zizmor have
+  their own workflows; CodeQL analyses Rust under a config. `release.yml`
+  refuses anything but a `v*` tag, checks the tag against the declared
+  version, builds the flashable UF2, gates on the tagged commit's CI, attests
+  provenance and publishes the GitHub Release last.
+
 ### Added
+
+- A criterion bench over `SignalEngine::on_tick` (`codspeed-criterion-compat`,
+  so CodSpeed measures instruction counts on every push) and a libfuzzer
+  target feeding arbitrary ticks through the engine, kept out of the
+  workspace as cargo-fuzz builds it with sanitizer flags.
 
 - CI/CD: the repository's workflow suite — `ci.yml` (host jobs: fmt, clippy,
   3-OS test, `no_std` thumbv6m build, host-golden parity check, MSRV 1.86,
@@ -45,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   A drift-guard test pins the committed `embedded-data` `FEED` to the formula.
 - `embedded-data`: the generated `FEED`/`FEED_LEN` const replay feed.
 - `wickra-pico-signal`: the shared, `#![no_std]`, allocation-free EMA(9)/EMA(21)
-  cross engine over `embed-core`. `SignalEngine::on_tick` streams prices and
+  cross engine over `wickra-embed-core`. `SignalEngine::on_tick` streams prices and
   emits a `Signal` (golden/death cross) on each crossing, with an exact-`0.0` tie
   treated as a neutral hold. Host tests (warmup, ordered golden-then-death,
   reset, and proptest alternation/determinism) plus the `thumbv6m-none-eabi`
@@ -53,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository scaffold: governance, supply-chain configuration (`deny.toml`,
   `lychee.toml`, `osv-scanner.toml`, `repo-metadata.toml`), the host workspace
   (`wickra-pico-signal`, `wickra-pico-host`, `embedded-data`) with the
-  `firmware/*` crates excluded, and the `no_std`-kernel decision (Weg A:
-  `embed-core` git dependency — see `ARCHITECTURE.md`).
+  `firmware/*` crates excluded, and the `no_std`-kernel decision (path A:
+  depend on `wickra-embed-core` — see `ARCHITECTURE.md`).
 
 [Unreleased]: https://github.com/wickra-lib/wickra-pico/commits/main

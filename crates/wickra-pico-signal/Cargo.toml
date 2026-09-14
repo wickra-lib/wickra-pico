@@ -1,6 +1,6 @@
 [package]
 name = "wickra-pico-signal"
-description = "no_std EMA-cross signal engine over the Wickra embed-core indicator kernel — the shared, host-testable signal core."
+description = "no_std EMA-cross signal engine over the wickra-embed-core indicator kernel — the shared, host-testable signal core."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -14,12 +14,17 @@ workspace = true
 [features]
 # `std` is on by default so host `cargo test`/`cargo build` are ready to go.
 # Bare-metal firmware builds with `--no-default-features`, at which point the
-# crate and its embed-core dependency are strictly `#![no_std]`.
+# crate and its wickra-embed-core dependency are strictly `#![no_std]`.
 default = ["std"]
-std = ["embed-core/std"]
+std = ["wickra-embed-core/std"]
 
 [dependencies]
-embed-core = { workspace = true }
+wickra-embed-core = { workspace = true }
 
 [dev-dependencies]
 proptest = "1"
+criterion = { workspace = true }
+
+[[bench]]
+name = "signal"
+harness = false
