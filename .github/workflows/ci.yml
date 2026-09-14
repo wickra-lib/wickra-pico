@@ -9,6 +9,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -20,6 +21,13 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   CARGO_NET_RETRY: "10"
+  CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+  # No npm or pip runs here, but the retry knobs are the family's and cost
+  # nothing: a job added later inherits them instead of flaking first.
+  npm_config_fetch_retries: "5"
+  npm_config_fetch_retry_maxtimeout: "120000"
+  PIP_RETRIES: "5"
+  PIP_DEFAULT_TIMEOUT: "120"
   RUSTFLAGS: "-D warnings"
 
 jobs:
@@ -47,7 +55,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           components: clippy
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo clippy -p wickra-pico-signal -p wickra-pico-host --all-targets --all-features -- -D warnings
 
   test:
@@ -63,7 +71,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo test -p wickra-pico-signal -p wickra-pico-host --all-features
 
   no-std-build:
@@ -77,7 +85,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: thumbv6m-none-eabi
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       # The signal kernel must build allocation-free for the Cortex-M0+ core with
       # its std default feature off — the same shape the firmware links.
       - run: cargo build -p wickra-pico-signal --no-default-features --target thumbv6m-none-eabi
@@ -91,7 +99,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       # Recompute the signal sequence and assert it equals the committed golden
       # byte-for-byte — the host side of the cross-target-parity guarantee.
       - run: cargo run -p wickra-pico-host -- check
@@ -107,7 +115,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           toolchain: "1.86"
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo check -p wickra-pico-signal -p wickra-pico-host --all-features
 
   deny:
@@ -118,7 +126,123 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+      - uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b # v2.87.4
         with:
           tool: cargo-deny
-      - run: cargo deny check advisories bans sources licenses
+      - run: cargo deny check
+
+  # The kernel under libFuzzer for a short smoke: any tick stream, no panic,
+  # and two engines fed the same stream agree. cargo-fuzz needs nightly and
+  # its own detached workspace (fuzz/).
+  fuzz-smoke:
+    name: Fuzz (smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45 # backstop against a wedged job, not a budget
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-rust
+        with:
+          toolchain: nightly
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: fuzz
+      - name: Install cargo-fuzz
+        uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b # v2.87.4
+        with:
+          tool: cargo-fuzz
+      - name: Fuzz on_tick (30 s)
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu on_tick -- -max_total_time=30
+        working-directory: fuzz
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-rust
+        with:
+          components: llvm-tools-preview
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b # v2.87.4
+        with:
+          tool: cargo-llvm-cov
+      # The deterministic core is the signal kernel; the host generator is what
+      # proves it against the golden. Measure both, nothing from the firmware
+      # tree (excluded from the workspace, built by firmware.yml).
+      - name: Generate coverage (lcov)
+        run: >
+          cargo llvm-cov
+          -p wickra-pico-signal -p wickra-pico-host --all-features
+          --lcov --output-path lcov.info
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        with:
+          files: lcov.info
+          # An organization-level upload token carries no repository identity,
+          # so Codecov cannot route the upload without an explicit slug and
+          # falls back to a tokenless upload, which a protected branch rejects.
+          slug: ${{ github.repository }}
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # osv-scanner.toml existed and nothing ran it: cargo-deny reads the RustSec
+  # database, OSV reads every ecosystem's, and the two disagree on advisories
+  # often enough that the family runs both.
+  osv:
+    name: osv-scanner
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # --no-resolve: the lockfiles are scanned in full and transitively; a
+      # manifest without one is not resolved against the registry.
+      - name: osv-scanner
+        uses: google/osv-scanner-action/osv-scanner-action@6e4298ebc4db23e847df9b2e2de2939d6f066c67 # v2.5.1
+        with:
+          scan-args: |-
+            --recursive
+            --no-resolve
+            --config=osv-scanner.toml
+            ./
+
+  repo-checks:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # backstop against a wedged job, not a budget
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Versions agree across every manifest
+        run: python scripts/check_version_sync.py
+      - name: Published crates carry their licence texts
+        run: python scripts/check_license_copies.py
+
+  # links.yml runs this on a schedule against the whole tree; this is the
+  # pull-request half, so a README that gains a dead link is caught in review
+  # rather than by a nightly nobody is watching. Non-blocking on purpose: an
+  # external host being down is not this repository's defect.
+  links:
+    name: External links (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 10 # backstop against a wedged job, not a budget
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --config lychee.toml --no-progress --root-dir "${{ github.workspace }}" "*.md" "docs/*.md"
+          fail: true

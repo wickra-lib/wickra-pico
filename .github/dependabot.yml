@@ -28,21 +28,24 @@ updates:
         patterns:
           - "*"
 
-  # Firmware crate: ESP32 — own manifest.
+  # The fuzz crate is a detached workspace (cargo-fuzz builds it on its own with
+  # sanitizer flags), so the root cargo entry above does not reach it.
   - package-ecosystem: cargo
-    directory: "/firmware/esp32"
+    directory: "/fuzz"
     schedule:
       interval: monthly
       time: "06:00"
       timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
     cooldown:
       default-days: 7
+    commit-message:
+      prefix: "deps(fuzz)"
     groups:
-      firmware-esp32:
+      fuzz:
         patterns:
           - "*"
 
-  # GitHub Actions workflows.
   - package-ecosystem: github-actions
     directory: "/"
     schedule:

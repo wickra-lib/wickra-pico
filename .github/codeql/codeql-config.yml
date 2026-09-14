@@ -1,0 +1,14 @@
+name: wickra-pico CodeQL configuration
+
+# What CodeQL should not spend a pass on, and why.
+paths-ignore:
+  # Fixtures, not code: the golden series and the expected signal sequence.
+  - golden
+  # Build output.
+  - target
+  - firmware/*/target
+
+paths:
+  - crates
+  - firmware
+  - embedded-data

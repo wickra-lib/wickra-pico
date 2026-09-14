@@ -29,13 +29,10 @@ confidence-threshold = 0.93
 
 [bans]
 multiple-versions = "warn"
-# Wildcards are denied; the one git dependency (embed-core) carries a `version`
-# pin, so it is not a wildcard.
+# Wildcards are denied.
 wildcards = "deny"
 
 [sources]
 unknown-registry = "deny"
 unknown-git = "deny"
-# The no_std signal kernel is consumed as a git dependency from the wickra-embed
-# repo (Weg A). Allow exactly that source; everything else stays denied.
-allow-git = ["https://github.com/wickra-lib/wickra-embed"]
+# Every dependency comes from crates.io; no git source is allowed.
