@@ -10,25 +10,24 @@ reference — cross-target determinism.
 The indicator kernel must be `no_std` (no OS, no allocator). Two paths were on
 the table:
 
-- **Weg A (chosen): git-dep on `embed-core`.** The
-  [`wickra-embed`](https://github.com/wickra-lib/wickra-embed) repo already ships
-  `embed-core` — an allocation-free, `#![no_std]`, `forbid(unsafe_code)` crate
-  with the streaming `Indicator` trait and `Ema`/`Sma`/`Rsi`/`Atr`/`Roc`,
-  byte-exact against the main `wickra-core`. Wickra Pico consumes it as a
-  version-pinned git dependency (`embed-core = { git = "…/wickra-embed", version
-  = "0.1" }`).
+- **Weg A (chosen): depend on `wickra-embed-core`.** The
+  [`wickra-embed`](https://github.com/wickra-lib/wickra-embed) repo ships
+  `wickra-embed-core` — an allocation-free, `#![no_std]`, `forbid(unsafe_code)`
+  crate with the streaming `Indicator` trait and `Ema`/`Sma`/`Rsi`/`Atr`/`Roc`,
+  byte-exact against the main `wickra-core`. Wickra Pico consumes it from
+  crates.io, pinned exactly (`wickra-embed-core = "=0.1.0"`).
 - **Weg B (fallback, not taken): make `wickra-core` no_std.** An upstream change
   to the main `wickra` repo giving `wickra-core` a `no_std` feature. Not needed —
-  `embed-core` already exists and is verified.
+  `wickra-embed-core` already exists and is verified.
 
 `wickra-core` v0.9 is `std` (uses `thiserror`, optional `rayon`), so it is **not**
-usable directly on bare metal; `embed-core` is the no_std path.
+usable directly on bare metal; `wickra-embed-core` is the no_std path.
 
 ## Workspace
 
 | Crate / dir | Target | Role |
 |-------------|--------|------|
-| `crates/wickra-pico-signal` | host + `no_std` | The signal wrapper: feeds ticks through the EMA(9)/EMA(21) cross from `embed-core` and emits a cross signal. |
+| `crates/wickra-pico-signal` | host + `no_std` | The signal wrapper: feeds ticks through the EMA(9)/EMA(21) cross from `wickra-embed-core` and emits a cross signal. |
 | `crates/wickra-pico-host` | host (`std`) | The golden-reference generator and byte-exact parity checker — the oracle the firmware is checked against. |
 | `embedded-data` | host + `no_std` | The embedded replay feed (a generated `const [f32; 128]`). |
 | `firmware/rp-pico` | `thumbv6m-none-eabi` | RP2040 firmware: streams the feed, toggles the on-board LED on a cross. The showcase. |
@@ -61,7 +60,7 @@ flashing (BOOTSEL `.uf2` or `probe-rs`) in [docs/FLASHING.md](docs/FLASHING.md).
 
 ## Numeric type: `f64` everywhere
 
-The `embed-core` `Ema` is `f64`-native, so — following the handoff's "one type,
+The `wickra-embed-core` `Ema` is `f64`-native, so — following the handoff's "one type,
 everywhere" rule — Wickra Pico is `f64` end to end: the engine, the difference,
 and the comparison. The feed is stored as `f32` and widens **losslessly** to
 `f64` before the engine, identically on the host and the device. Keeping a single

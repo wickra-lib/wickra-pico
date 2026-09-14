@@ -7,7 +7,7 @@ workstation, byte-for-byte. This document is why that holds.
 
 ## One numeric type, everywhere: `f64`
 
-The Wickra indicator core (`wickra-core`, and the `no_std` `embed-core` it
+The Wickra indicator core (`wickra-core`, and the `no_std` `wickra-embed-core` it
 mirrors) is `f64`-native — `Ema::update` takes and returns `f64`. The handoff
 spec left the numeric type open (an f32 placeholder), with an explicit
 instruction: **if the core is `f64`, use `f64` everywhere, including the
