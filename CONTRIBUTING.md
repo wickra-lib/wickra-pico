@@ -47,15 +47,21 @@ no_std core is built on both Cortex-M targets on every PR.
   `unwrap` or `expect` in the no_std core path — a panic on an MCU is a reset;
   return `Result`/`Option` instead.
 
-## Adding an indicator
+## Changing the signal
 
-Every new indicator is a `#![no_std]`, allocation-free struct implementing
-`Indicator`, added under `crates/wickra-pico-signal/src/indicators/`, and **must ship a
-parity test** in `crates/wickra-pico-signal/tests/parity.rs` proving its output is
-byte-for-byte identical to the corresponding `wickra-core` indicator. Preserve
-the exact f64 operation order of the reference (rolling-sum add/subtract order,
-the periodic reseed, the final division) so the byte-parity holds on every
-target.
+No indicator code lives here: the kernel is the published `wickra-embed-core`,
+and the whole trading logic of the demo is `SignalEngine` in
+`crates/wickra-pico-signal/src/engine.rs` -- `#![no_std]`, allocation-free,
+scalar-only, and the same code on the host and on the RP2040. A change to it
+(a different period, a new signal) is one change in that file, with a host
+test in `crates/wickra-pico-signal/tests/engine_tests.rs`, and then the golden
+corpus regenerated with `cargo run -p wickra-pico-host -- bless` and verified
+with `cargo run -p wickra-pico-host -- check`, which recomputes the sequence
+and asserts it equals `golden/expected/ema_cross.txt` byte-for-byte. Keep the
+signal path free of platform math (`f64` end to end, `libm` for the feed), so
+the on-device sequence stays identical to the host's -- that parity is the
+point of the repository. See [docs/SIGNAL.md](docs/SIGNAL.md) and
+[docs/DETERMINISM.md](docs/DETERMINISM.md).
 
 ## Developer Certificate of Origin
 
