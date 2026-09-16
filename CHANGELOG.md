@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The repository spells shared things the way the family does.** A cross-repo
+  scan lined the 24 wickra-lib repositories up and this one differed in:
+  `fuzz/Cargo.lock` committed where 22 siblings treat it as the local artifact
+  it is (it recorded crate versions from before the 0.1.0 bump and was never
+  refreshed; it is untracked and ignored now, like the fuzz build directory),
+  `panic-halt = "1"` where the family writes `"1.0"`, and the fuzz job on a
+  rolling nightly rather than the family's pinned `nightly-2026-07-01`.
+
 ## [0.1.0] - 2026-09-14
 
 ### Changed

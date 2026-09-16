@@ -18,7 +18,7 @@ cortex-m = "0.7"
 cortex-m-rt = "0.7"
 embedded-hal = "1.0"
 rp-pico = "0.9"
-panic-halt = "1"
+panic-halt = "1.0"
 wickra-pico-signal = { path = "../../crates/wickra-pico-signal", default-features = false }
 embedded-data = { path = "../../embedded-data" }
 
