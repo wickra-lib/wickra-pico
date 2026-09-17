@@ -12,3 +12,11 @@ the implementation and has to change in the same commit as it:
 - [`SIGNAL.md`](SIGNAL.md)
 - [`VIDEO_SCRIPT.md`](VIDEO_SCRIPT.md)
 - [`WIRING.md`](WIRING.md)
+
+## Editing the docs
+
+The documentation site is a separate git repository at
+`https://github.com/wickra-lib/wickra-pico-site`. Open a pull request there to
+propose changes; the site is built with VitePress and deploys to
+`pico.wickra.org`. The files in this directory change in the same commit as
+the code they describe.

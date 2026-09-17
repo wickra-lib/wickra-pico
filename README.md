@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514" alt="Wickra Pico — Wickra's O(1) indicator core running bare-metal on a $5 Raspberry Pi Pico" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514-7" alt="Wickra Pico — Wickra's O(1) indicator core running bare-metal on a $5 Raspberry Pi Pico" width="100%"></a>
 </p>
 
 [![Built on Wickra](https://img.shields.io/badge/built%20on-wickra-3b82f6)](https://github.com/wickra-lib/wickra)
@@ -11,21 +11,23 @@
 [![OpenSSF Scorecard](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/scorecard.svg)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra-pico)
 [![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/best-practices.svg)](https://www.bestpractices.dev)
 [![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/provenance.svg)](https://github.com/wickra-lib/wickra-pico/attestations)
-[![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/docs.svg)](https://wickra.org)
+[![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/docs.svg)](https://pico.wickra.org)
 [![Firmware](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml/badge.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml)
 [![Cross-target deterministic](https://img.shields.io/badge/cross--target-deterministic-3b82f6)](docs/DETERMINISM.md)
 
 ---
 
-# Wickra Pico
-
 **Wickra's O(1) indicator core running bare-metal on a $5 Raspberry Pi Pico — the LED blinks on the EMA cross.**
 
-> **Part of the [Wickra ecosystem](https://github.com/wickra-lib):** the same data-driven core and ten-language binding surface also power [wickra-exchange](https://github.com/wickra-lib/wickra-exchange), [wickra-backtest](https://github.com/wickra-lib/wickra-backtest), [wickra-terminal](https://github.com/wickra-lib/wickra-terminal) and 20 more — see [the full list](https://github.com/wickra-lib).
-> streaming indicator core that powers
-> [wickra-backtest](https://github.com/wickra-lib/wickra-backtest) and
-> [wickra-screener](https://github.com/wickra-lib/wickra-screener) also runs
-> `no_std` on a microcontroller — no OS, no allocator, no heap.
+> **▶ Live demos:** the backtester compiled to WebAssembly, an equity curve building bar by bar — **[backtest-live.wickra.org](https://backtest-live.wickra.org)**;
+> one StrategySpec side by side in Python, Rust, JS and Go — **[playground.wickra.org](https://playground.wickra.org)**;
+> all 514 indicators of the core over a real Binance feed — **[live.wickra.org](https://live.wickra.org)**. Zero backend, all of them.
+
+**Part of the [Wickra ecosystem](#ecosystem):** the same data-driven core and ten-language binding surface also power [wickra-exchange](https://github.com/wickra-lib/wickra-exchange), [wickra-backtest](https://github.com/wickra-lib/wickra-backtest), [wickra-terminal](https://github.com/wickra-lib/wickra-terminal) and 20 more — see [the full list](https://github.com/wickra-lib).
+streaming indicator core that powers
+[wickra-backtest](https://github.com/wickra-lib/wickra-backtest) and
+[wickra-screener](https://github.com/wickra-lib/wickra-screener) also runs
+`no_std` on a microcontroller — no OS, no allocator, no heap.
 
 <!-- DEMO GIF: LED blinks on the EMA(9)/EMA(21) cross (added in P-PICO-9). -->
 
@@ -45,6 +47,12 @@ The `no_std` indicator kernel comes from
 cargo run -p wickra-pico-host -- check
 ( cd firmware/rp-pico && cargo build --target thumbv6m-none-eabi --release )
 ```
+
+## Status
+
+**0.1.0 — the current release.** The firmware image, the host-side tests and the
+golden corpus are in place and green in CI. [ROADMAP.md](ROADMAP.md) has what is
+done, what is open and what is not planned.
 
 ## Documentation
 
@@ -151,12 +159,6 @@ Run the suites with the commands in
 - **Bench** — `cargo bench -p wickra-pico-signal` times `on_tick` on the host;
   see [BENCHMARKS.md](BENCHMARKS.md).
 
-## Benchmarks
-
-The per-update cost of the signal kernel on the host and, once measured, in
-cycles on the RP2040 — see [BENCHMARKS.md](BENCHMARKS.md); reproduce with
-`cargo bench -p wickra-pico-signal`.
-
 ## Requirements
 
 - **Rust 1.86+** — the workspace MSRV.
@@ -164,6 +166,12 @@ cycles on the RP2040 — see [BENCHMARKS.md](BENCHMARKS.md); reproduce with
   (`rustup target add thumbv6m-none-eabi`), and `elf2uf2-rs` to turn the ELF
   into a drag-and-drop `.uf2`.
 - A **Raspberry Pi Pico** (RP2040) to run it; the host suite needs no hardware.
+
+## Benchmarks
+
+The per-update cost of the signal kernel on the host and, once measured, in
+cycles on the RP2040 — see [BENCHMARKS.md](BENCHMARKS.md); reproduce with
+`cargo bench -p wickra-pico-signal`.
 
 ## Ecosystem
 
@@ -210,15 +218,20 @@ no network.
 
 ## License
 
-Dual-licensed under either of
+Licensed under either of
 
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
-- MIT license ([LICENSE-MIT](LICENSE-MIT))
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+  <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
 
-at your option. Unless you explicitly state otherwise, any contribution
-intentionally submitted for inclusion in this work, as defined in the Apache-2.0
-license, shall be dual-licensed as above, without any additional terms or
-conditions.
+at your option. Use it, fork it, modify it, redistribute it — commercially or
+not — file issues, send pull requests; all welcome.
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
 
 ## Disclaimer
 

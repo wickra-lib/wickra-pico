@@ -1,21 +1,16 @@
-# Golden corpus
+# Golden fixtures
 
 The cross-target reference for the Wickra Pico demo. The signal sequence the
 firmware produces on the device must equal the sequence here, byte-for-byte —
 that is the cross-target-parity guarantee.
 
-## Files
+## Layout
 
 - **`data/ema_cross.csv`** — the replay feed (`index,price`, 128 rows).
 - **`expected/ema_cross.txt`** — the expected signal sequence, one
   `"<index> <token>"` line per cross.
 
-Both are **generated — never hand-edit.** Regenerate them (and the embedded
-`FEED` const) from the single feed formula with:
-
-```bash
-cargo run -p wickra-pico-host -- bless
-```
+Both are **generated — never hand-edit**; see [Blessing](#blessing).
 
 ## The feed formula
 
@@ -57,3 +52,12 @@ targets cannot diverge. This is verified two ways today:
 An additional *empirical* on-device check (running the firmware ELF under a
 Renode/QEMU RP2040 simulation and capturing the sequence over RTT) is tracked in
 [`../ROADMAP.md`](../ROADMAP.md); the guarantee above already pins the sequence.
+
+## Blessing
+
+Regenerate both files (and the embedded `FEED` const) from the single feed
+formula; the host-side test and the firmware image then agree on the same bytes:
+
+```bash
+cargo run -p wickra-pico-host -- bless
+```
