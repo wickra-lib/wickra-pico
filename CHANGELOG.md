@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Every README follows wickra's shape.** A cross-repo scan compared the
+  heading skeleton of each README against wickra's and this repository's
+  differed throughout. The root README opens as wickra's does (banner, badges,
+  the one-liner, the ecosystem line, no separate H1), gains the `## Status`
+  section every sibling has, the License section carries wickra's wording and
+  its `### Contribution` clause, and the shared sections run in wickra's order;
+  `fuzz/README.md` and the `## Editing the docs` section of `docs/README.md`
+  exist as they do in wickra.
+
+### Changed
+
 - **The repository spells shared things the way the family does.** A cross-repo
   scan lined the 24 wickra-lib repositories up and this one differed in:
   `fuzz/Cargo.lock` committed where 22 siblings treat it as the local artifact

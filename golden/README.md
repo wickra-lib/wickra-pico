@@ -1,10 +1,10 @@
-# Golden corpus
+# Golden fixtures
 
 The cross-target reference for the Wickra Pico demo. The signal sequence the
 firmware produces on the device must equal the sequence here, byte-for-byte —
 that is the cross-target-parity guarantee.
 
-## Files
+## Layout
 
 - **`data/ema_cross.csv`** — the replay feed (`index,price`, 128 rows).
 - **`expected/ema_cross.txt`** — the expected signal sequence, one
