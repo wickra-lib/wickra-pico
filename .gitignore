@@ -1,4 +1,10 @@
 /target
+# cargo-fuzz builds in a detached workspace under fuzz/; its build dir and
+# resolved lockfile are local artifacts, never committed.
+/fuzz/target
+/fuzz/Cargo.lock
+/fuzz/corpus
+/fuzz/artifacts
 firmware/*/target
 **/*.uf2
 **/*.bin
