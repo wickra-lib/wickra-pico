@@ -50,7 +50,7 @@ cargo run -p wickra-pico-host -- check
 
 ## Status
 
-**0.1.0 — the current release.** The firmware image, the host-side tests and the
+**0.1.1 — the current release.** The firmware image, the host-side tests and the
 golden corpus are in place and green in CI. [ROADMAP.md](ROADMAP.md) has what is
 done, what is open and what is not planned.
 
