@@ -332,7 +332,7 @@ checksum = "252afb9ae5eaa683babdc6a068b3f5726eb19e05070c731f9b2a23a7c3e8ed34"
 
 [[package]]
 name = "embedded-data"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "errno"
@@ -988,16 +988,16 @@ dependencies = [
 
 [[package]]
 name = "wickra-embed-core"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c18c3dbcb9a445932e29bb59d4972ea3e96b7812671151b68eead848de84777"
+checksum = "b710c163d35dff4ccd2295dceab3c37cf32b1cbc792ff71f7d13740aa3649c34"
 dependencies = [
  "libm",
 ]
 
 [[package]]
 name = "wickra-pico-host"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "embedded-data",
@@ -1007,7 +1007,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-pico-signal"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "codspeed-criterion-compat",
  "proptest",
