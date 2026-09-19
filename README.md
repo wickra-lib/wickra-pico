@@ -2,8 +2,8 @@
   <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514-7" alt="Wickra Pico — Wickra's O(1) indicator core running bare-metal on a $5 Raspberry Pi Pico" width="100%"></a>
 </p>
 
-[![Built on Wickra](https://img.shields.io/badge/built%20on-wickra-3b82f6)](https://github.com/wickra-lib/wickra)
-[![Status](https://img.shields.io/badge/status-pre--release-orange)](https://github.com/wickra-lib/wickra-pico)
+[![Built on Wickra](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/built-on.svg)](https://github.com/wickra-lib/wickra)
+[![Status](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/status.svg)](https://github.com/wickra-lib/wickra-pico)
 [![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/ci.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/ci.yml)
 [![CodeQL](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/codeql.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/codeql.yml)
 [![GitHub release](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/release.svg)](https://github.com/wickra-lib/wickra-pico/releases/latest)
@@ -13,7 +13,7 @@
 [![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/provenance.svg)](https://github.com/wickra-lib/wickra-pico/attestations)
 [![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/docs.svg)](https://pico.wickra.org)
 [![Firmware](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml/badge.svg)](https://github.com/wickra-lib/wickra-pico/actions/workflows/firmware.yml)
-[![Cross-target deterministic](https://img.shields.io/badge/cross--target-deterministic-3b82f6)](docs/DETERMINISM.md)
+[![Cross-target deterministic](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-pico/cross-target.svg)](docs/DETERMINISM.md)
 
 ---
 
