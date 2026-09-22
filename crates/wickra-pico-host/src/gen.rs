@@ -174,4 +174,96 @@ mod tests {
         assert_eq!(committed, formula, "run `bless` — the const feed drifted");
         assert_eq!(embedded_data::FEED_LEN, super::FEED_LEN);
     }
+
+    #[test]
+    fn the_csv_is_what_the_embedded_const_parses_back_to() {
+        // Both artifacts are rendered from one feed with `{:?}`, the shortest
+        // round-tripping f32 form. If either rendering stopped round-tripping,
+        // the device and the host would read different prices from artifacts
+        // that look the same -- so the CSV is parsed back and compared by bits.
+        let feed = super::feed();
+        let csv = super::render_csv(&feed);
+        let mut lines = csv.lines();
+        assert_eq!(
+            lines.next(),
+            Some("index,price"),
+            "the CSV carries a header"
+        );
+
+        let mut parsed = Vec::with_capacity(super::FEED_LEN);
+        for (i, line) in lines.enumerate() {
+            let (index, price) = line.split_once(',').expect("index,price");
+            assert_eq!(index.parse::<usize>().expect("an index"), i);
+            parsed.push(price.parse::<f32>().expect("a price"));
+        }
+        assert_eq!(parsed.len(), super::FEED_LEN);
+        assert_eq!(
+            parsed.iter().map(|p| p.to_bits()).collect::<Vec<_>>(),
+            feed.iter().map(|p| p.to_bits()).collect::<Vec<_>>(),
+            "the CSV has to parse back to the feed it was rendered from"
+        );
+    }
+
+    #[test]
+    fn the_embedded_source_is_the_committed_one() {
+        // `bless` writes this file; the test asserts the renderer still produces
+        // exactly what is committed, so a change to the rendering is noticed
+        // here rather than in a diff nobody reads.
+        let rendered = super::render_embedded_lib(&super::feed());
+        let committed =
+            std::fs::read_to_string(super::embedded_lib_path()).expect("embedded-data/src/lib.rs");
+        // Compared line by line: git may have checked the file out with CRLF,
+        // and the line endings are not what this test is about.
+        assert!(
+            rendered.lines().eq(committed.lines()),
+            "run `cargo run -p wickra-pico-host -- bless`"
+        );
+    }
+
+    #[test]
+    fn the_paths_point_inside_the_repository() {
+        // Each artifact path is built from CARGO_MANIFEST_DIR; a wrong join
+        // would have `bless` write outside the repository, which is the kind of
+        // mistake that is only noticed after it happened.
+        for path in [
+            super::csv_path(),
+            super::expected_path(),
+            super::embedded_lib_path(),
+        ] {
+            assert!(path.exists(), "{} is committed", path.display());
+            let root = super::repo_root().canonicalize().expect("the repo root");
+            assert!(
+                path.canonicalize()
+                    .expect("the artifact")
+                    .starts_with(&root),
+                "{} lies inside {}",
+                path.display(),
+                root.display()
+            );
+        }
+    }
+
+    #[test]
+    fn check_succeeds_against_the_committed_golden() {
+        // The command the CI parity job runs, exercised as a function: a
+        // byte-exact match is SUCCESS.
+        assert_eq!(
+            format!("{:?}", super::check()),
+            format!("{:?}", std::process::ExitCode::SUCCESS)
+        );
+    }
+
+    #[test]
+    fn a_signal_line_is_an_index_and_a_token() {
+        let produced = super::run_signals(&super::feed());
+        assert!(!produced.is_empty(), "the feed has to fire something");
+        for line in produced.lines() {
+            let (index, token) = line.split_once(' ').expect("<index> <token>");
+            assert!(
+                index.parse::<usize>().expect("an index") < super::FEED_LEN,
+                "{line}"
+            );
+            assert!(!token.is_empty(), "{line}");
+        }
+    }
 }
