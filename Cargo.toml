@@ -20,7 +20,7 @@ authors = ["wickra-lib"]
 # copies of the kernel in one graph. `default-features = false` here so
 # consumers get the strictly-no_std crate by default and opt into `std`
 # explicitly (the firmware never does).
-wickra-embed-core = { version = "=0.1.1", default-features = false }
+wickra-embed-core = { version = "=0.1.2", default-features = false }
 clap = { version = "4", features = ["derive"] }
 # codspeed-criterion-compat is a drop-in for criterion: the bench keeps its
 # criterion API and runs as criterion locally, but under `cargo codspeed` it

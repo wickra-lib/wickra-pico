@@ -14,7 +14,11 @@ publishes the refreshed dependency tree and toolchain pins.
 
 ### Changed
 
-- **Third-party dependencies refreshed.** `Cargo.lock` takes 14 crates to their
+- **The family pins follow the owners' releases.** `wickra-embed-core` =0.1.1 ->
+  =0.1.2 -- the exact pins this repository keeps on its siblings move to the
+  versions those repositories release in the same train, and every tracked
+  lockfile follows.
+- **Third-party dependencies refreshed.** `Cargo.lock` takes 15 crates to their
   newest versions compatible with the Rust floor (the lock now resolves
   MSRV-aware, see below), run across the family in one pass so every repository
   resolves the same day's versions. No manifest changed.

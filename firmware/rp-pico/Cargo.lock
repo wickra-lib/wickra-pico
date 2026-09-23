@@ -510,9 +510,9 @@ dependencies = [
 
 [[package]]
 name = "wickra-embed-core"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b710c163d35dff4ccd2295dceab3c37cf32b1cbc792ff71f7d13740aa3649c34"
+checksum = "38dd005fef1fe1f8bfc4480c31c26e8daebac0a89c46b2cb773de3bf90842a9b"
 dependencies = [
  "libm",
 ]
