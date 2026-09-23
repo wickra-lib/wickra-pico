@@ -7,7 +7,7 @@ members = ["crates/wickra-pico-signal", "crates/wickra-pico-host", "embedded-dat
 exclude = ["firmware/rp-pico", "fuzz"]
 
 [workspace.package]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 rust-version = "1.86"
 license = "MIT OR Apache-2.0"

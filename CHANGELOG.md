@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-23
+
+A maintenance release: the firmware and its signal engine are unchanged. It
+publishes the refreshed dependency tree and toolchain pins.
+
+### Changed
+
+- **Third-party dependencies refreshed.** `Cargo.lock` takes 9 crates to their
+  newest semver-compatible versions, run across the family in one pass so every
+  repository resolves the same day's versions. No manifest changed.
+- **The README's static badges are served by the organization** rather than
+  hot-linked from shields.io, so they no longer break when shields is down.
+
+### Tests
+
+- **The golden generator's own artifacts are checked, not only the sequence it
+  produces.** The CSV feed parses back to the feed's exact bits, the embedded
+  `FEED` source is the committed one line for line, every artifact path lies
+  inside the repository, `check` succeeds against the committed golden, and
+  every signal line is an index and a token.
+
 ## [0.1.1] - 2026-09-18
 
 ### Changed
@@ -111,6 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `firmware/*` crates excluded, and the `no_std`-kernel decision (path A:
   depend on `wickra-embed-core` — see `ARCHITECTURE.md`).
 
-[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/wickra-lib/wickra-pico/releases/tag/v0.1.0
