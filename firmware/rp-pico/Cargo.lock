@@ -110,7 +110,7 @@ checksum = "252afb9ae5eaa683babdc6a068b3f5726eb19e05070c731f9b2a23a7c3e8ed34"
 
 [[package]]
 name = "embedded-data"
-version = "0.1.1"
+version = "0.1.2"
 
 [[package]]
 name = "embedded-dma"
@@ -510,16 +510,16 @@ dependencies = [
 
 [[package]]
 name = "wickra-embed-core"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b710c163d35dff4ccd2295dceab3c37cf32b1cbc792ff71f7d13740aa3649c34"
+checksum = "38dd005fef1fe1f8bfc4480c31c26e8daebac0a89c46b2cb773de3bf90842a9b"
 dependencies = [
  "libm",
 ]
 
 [[package]]
 name = "wickra-pico-rp-pico"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
@@ -532,7 +532,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-pico-signal"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "wickra-embed-core",
 ]
