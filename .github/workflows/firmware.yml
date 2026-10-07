@@ -27,7 +27,7 @@ env:
 jobs:
   rp2040:
     name: rp2040 (thumbv6m)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     defaults:
       run:

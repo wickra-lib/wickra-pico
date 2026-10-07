@@ -28,7 +28,7 @@ jobs:
   # producer needs.
   guard:
     name: Refuse to release from anything but a tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:
       - name: Check the ref
@@ -50,7 +50,7 @@ jobs:
   # and the firmware agree on what was shipped.
   version:
     name: The tag names the declared version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     needs: [guard]
     steps:
@@ -74,7 +74,7 @@ jobs:
   gate:
     name: Nothing releases before this
     needs: [version]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
     permissions:
       contents: read
@@ -129,7 +129,7 @@ jobs:
   firmware-uf2:
     name: Build RP2040 .uf2
     needs: [gate]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     permissions:
       contents: read
@@ -168,7 +168,7 @@ jobs:
   github-release:
     name: Attach assets to the draft GitHub Release
     needs: [firmware-uf2]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     permissions:
       contents: write # create the release and upload the .uf2 + golden assets
@@ -216,7 +216,7 @@ jobs:
     name: Publish the GitHub Release
     timeout-minutes: 10
     needs: [github-release]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
