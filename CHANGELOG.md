@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-28
+
+A maintenance release: the firmware and its signal engine are unchanged.
+
+### Changed
+
+- **The family pins follow the owners' releases.** `wickra-embed-core` =0.1.2 ->
+  =0.1.3 -- the exact pins this repository keeps on its siblings move to the
+  versions those repositories release in the same train, and every tracked
+  lockfile follows.
+- **The READMEs show the organization's banner as vectors,** so its text stays
+  sharp at any width and zoom.
+- **The ecosystem list quotes the backtest registry's count** (495) for the
+  products that resolve indicators through it, rather than the core's 514.
+
 ## [0.1.2] - 2026-09-23
 
 A maintenance release: the firmware and its signal engine are unchanged. It
@@ -145,7 +160,8 @@ publishes the refreshed dependency tree and toolchain pins.
   `firmware/*` crates excluded, and the `no_std`-kernel decision (path A:
   depend on `wickra-embed-core` — see `ARCHITECTURE.md`).
 
-[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/wickra-lib/wickra-pico/releases/tag/v0.1.0
