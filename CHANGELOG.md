@@ -13,6 +13,10 @@ A maintenance release: the firmware and its signal engine are unchanged.
 
 ### Changed
 
+- **The family pins follow the owners' releases.** `wickra-embed-core` =0.1.2 ->
+  =0.1.3 -- the exact pins this repository keeps on its siblings move to the
+  versions those repositories release in the same train, and every tracked
+  lockfile follows.
 - **The READMEs show the organization's banner as vectors,** so its text stays
   sharp at any width and zoom.
 - **The ecosystem list quotes the backtest registry's count** (495) for the
