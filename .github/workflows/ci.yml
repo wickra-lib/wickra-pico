@@ -55,7 +55,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           components: clippy
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - run: cargo clippy -p wickra-pico-signal -p wickra-pico-host --all-targets --all-features -- -D warnings
 
   test:
@@ -71,7 +71,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - run: cargo test -p wickra-pico-signal -p wickra-pico-host --all-features
 
   no-std-build:
@@ -85,7 +85,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: thumbv6m-none-eabi
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       # The signal kernel must build allocation-free for the Cortex-M0+ core with
       # its std default feature off — the same shape the firmware links.
       - run: cargo build -p wickra-pico-signal --no-default-features --target thumbv6m-none-eabi
@@ -99,7 +99,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       # Recompute the signal sequence and assert it equals the committed golden
       # byte-for-byte — the host side of the cross-target-parity guarantee.
       - run: cargo run -p wickra-pico-host -- check
@@ -115,7 +115,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           toolchain: "1.86"
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - run: cargo check -p wickra-pico-signal -p wickra-pico-host --all-features
 
   deny:
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: taiki-e/install-action@9983c65e42da123ff25d1f78505eb6de315aa172 # v2.87.20
+      - uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
         with:
           tool: cargo-deny
       - run: cargo deny check
@@ -148,11 +148,11 @@ jobs:
           # with a codegen ICE unrelated to this code. Move the date deliberately,
           # in every repo at once.
           toolchain: nightly-2026-07-01
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           workspaces: fuzz
       - name: Install cargo-fuzz
-        uses: taiki-e/install-action@9983c65e42da123ff25d1f78505eb6de315aa172 # v2.87.20
+        uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
         with:
           tool: cargo-fuzz
       - name: Fuzz on_tick (30 s)
@@ -170,9 +170,9 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           components: llvm-tools-preview
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@9983c65e42da123ff25d1f78505eb6de315aa172 # v2.87.20
+        uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
         with:
           tool: cargo-llvm-cov
       # The deterministic core is the signal kernel; the host generator is what
@@ -211,7 +211,7 @@ jobs:
       # --no-resolve: the lockfiles are scanned in full and transitively; a
       # manifest without one is not resolved against the registry.
       - name: osv-scanner
-        uses: google/osv-scanner-action/osv-scanner-action@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
+        uses: google/osv-scanner-action/osv-scanner-action@b1d267aea5211fa648d9d442fa64b90dbdcbdd36 # v2.7.0
         with:
           scan-args: |-
             --recursive
