@@ -129,7 +129,6 @@ pub fn bless() {
 ///
 /// Returns [`ExitCode::SUCCESS`] on a byte-exact match, [`ExitCode::FAILURE`]
 /// otherwise (with a diff summary on stderr).
-#[must_use]
 pub fn check() -> ExitCode {
     let produced = run_signals(&feed());
     let committed = match fs::read_to_string(expected_path()) {
