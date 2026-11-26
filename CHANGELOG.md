@@ -14,8 +14,13 @@ Go 1.27, and ships the refreshed dependency tree.
 
 ### Changed
 
-- **Third-party dependencies refreshed.** `Cargo.lock` takes 39 crates at their
-  latest releases within the declared ranges. No manifest changed.
+- **The family pins follow the owners' releases.** `wickra-embed-core` =0.1.3 ->
+  =0.1.4 -- the exact pins this repository keeps on its siblings move to the
+  versions those repositories release in the same train, and every tracked
+  lockfile follows.
+- **Third-party dependencies refreshed.** `Cargo.lock` takes 37 crates at their
+  latest releases within the declared ranges. The refresh itself changes no
+  manifest.
 - **Dependabot's monthly updates** (GitHub Actions): 1 pull requests, each
   checked against the versions the rest of the family holds.
 - **CI and release workflow:** bump the firmware-rp-pico group in
