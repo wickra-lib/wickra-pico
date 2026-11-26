@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-26
+
+A maintenance release: it follows wickra-core 2.2.0, builds on Rust 1.100 and
+Go 1.27, and ships the refreshed dependency tree.
+
+### Changed
+
+- **Third-party dependencies refreshed.** `Cargo.lock` takes 39 crates at their
+  latest releases within the declared ranges. No manifest changed.
+- **Dependabot's monthly updates** (GitHub Actions): 1 pull requests, each
+  checked against the versions the rest of the family holds.
+- **CI and release workflow:** bump the firmware-rp-pico group in
+  /firmware/rp-pico with 2 updates; bump the actions group with 14 updates.
+
+### Security
+
+- **rustix 1.1.6** in the lockfile, for RUSTSEC-2026-0486: xattr functions
+  marked unwritten bytes as initialised when given a zero-length buffer.
+- **Assessed as not affecting this project:** RUSTSEC-2026-0574,
+  RUSTSEC-2026-0575, RUSTSEC-2026-0576, RUSTSEC-2026-0577, RUSTSEC-2026-0578,
+  RUSTSEC-2026-0579, RUSTSEC-2026-0580, RUSTSEC-2026-0581, RUSTSEC-2026-0582.
+  heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico /
+  rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed
+  StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList,
+  Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a
+  panicking element) is used. usb-device has no release on heapless 0.9; remove
+  when it does.
+
 ## [0.1.3] - 2026-10-28
 
 A maintenance release: the firmware and its signal engine are unchanged.
@@ -160,7 +188,8 @@ publishes the refreshed dependency tree and toolchain pins.
   `firmware/*` crates excluded, and the `no_std`-kernel decision (path A:
   depend on `wickra-embed-core` — see `ARCHITECTURE.md`).
 
-[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/wickra-lib/wickra-pico/compare/v0.1.0...v0.1.1
