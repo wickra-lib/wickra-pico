@@ -24,3 +24,39 @@ reason = "bare-metal is deprecated, not defective; reached only through cortex-m
 [[IgnoredVulns]]
 id = "RUSTSEC-2024-0436"
 reason = "paste is an unmaintained compile-time proc-macro reached through rp2040-hal and pio in the RP2040 firmware lock; it ships no code in the image. Clears when rp2040-hal drops it."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0574"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0575"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0576"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0577"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0578"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0579"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0580"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0581"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0582"
+reason = "heapless < 0.9.4 reaches this graph only through usb-device 0.3.2 (rp-pico / rp2040-hal) in the firmware; it uses heapless::Vec/String of borrowed StringDescriptors (no Drop), and none of the affected APIs (SortedLinkedList, Spsc, IndexMap, Deque, HistoryBuf, the pools, vec::IntoIter dropping a panicking element) is used. usb-device has no release on heapless 0.9; remove when it does."
